@@ -30,7 +30,9 @@ public class EnableFalconVelocityClosedLoop extends CommandBase {
   @Override
   public void initialize() {
   }
-
+  public void changeVelocity(double velocity) {
+    this.velocity = velocity;
+  }
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
