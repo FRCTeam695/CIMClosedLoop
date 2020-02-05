@@ -95,7 +95,6 @@ public class FalconClosedLoop extends SubsystemBase {
         if (!this.CurrentControlMode.equals(ControlMode.Velocity))
             throw new IllegalArgumentException("Cannot set control mode to velocity when motor control mode is not velocity.");
         double targetVelocity_UnitsPer100ms = (velocity * 4096/600);
-        System.out.println(targetVelocity_UnitsPer100ms);
         Talon.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     }
     public void setMotor(double value) {
