@@ -16,4 +16,6 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final double LIMELIGHT_MOUNT_HEIGHT = 19.0;
+    public static final double LIMELIGHT_MOUNT_ANGLE = 15.0;
 }
