@@ -21,8 +21,8 @@ public class TurretMotor extends SubsystemBase {
    * Creates a new TurretMotor.
    */
   private VictorSPX motor;
-  private double gain = .5;
-  private double multiple = .25;
+  private double gain = .4;
+  //private double multiple = .3;
   private NetworkTable LimeLight;
   private NetworkTableEntry LimeLightAzimuth;
   private NetworkTableEntry LimeLightCoPolar;
@@ -41,7 +41,6 @@ public class TurretMotor extends SubsystemBase {
       throw new IllegalArgumentException("Velocity is too high.");
     power *= gain;
     motor.set(ControlMode. PercentOutput, power);
-
   }
 
   public double getAzimuth(){
@@ -57,6 +56,7 @@ public class TurretMotor extends SubsystemBase {
   public double getDistanceToContour() {
     return (82.0-Constants.LIMELIGHT_MOUNT_HEIGHT)/Math.tan(Math.toRadians(Constants.LIMELIGHT_MOUNT_ANGLE+getCoPolar()));
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

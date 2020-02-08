@@ -16,6 +16,10 @@ import frc.robot.Constants;
 public class AutoTurretRotation extends CommandBase {
   //private ModelTurret TurretControlled;
   private TurretMotor motor;
+  private int t = 0;
+  private int i = 0;
+  private final int finalLimit = 500;
+  private final double velocity = .25;
 
   //private int panDirection = 1;
   /**
@@ -35,16 +39,34 @@ public class AutoTurretRotation extends CommandBase {
   //second version of execute
   @Override
   public void execute() {
-    //motor.setPower(.75);
+    if(i == 0) {
+      motor.setPower(velocity);
+      t += 20;
+    }
+    if(i == 1) {
+      motor.setPower(-velocity);
+      t -= 20;
+    }
+    if(t == 0) {
+      i = 0;
+      motor.setPower(velocity);
+    }
+    if(t == finalLimit) {
+      i = 1;
+      motor.setPower(-velocity);
+    }
+    
   }
 
   public boolean endCommand() {
-    return motor.getContourArea() > 0.001;
+    System.out.println(motor.getAzimuth());
+    return motor.getAzimuth() != 0.0;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    
     return endCommand();
   }
 }

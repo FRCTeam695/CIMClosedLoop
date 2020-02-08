@@ -60,8 +60,8 @@ public class RobotContainer {
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
   private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup();
 
-  private double topPercent = 0.8;
-  private double bottomPercent = -0.15;
+  private double topPercent = 0;//0.8;
+  private double bottomPercent = 0;//-0.15;
 
   private Encoder enc1 = new Encoder(0, 1);
   //7 is top, 6 is bottom
@@ -101,7 +101,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    TurretGroup.addCommands(Finding,Focusing);
+    TurretGroup.addCommands(Focusing);
     BButton.whenPressed(TurretGroup);
     XButton.whenPressed(new InstantCommand(Focusing::change));
     POVTop.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent+=.05));
