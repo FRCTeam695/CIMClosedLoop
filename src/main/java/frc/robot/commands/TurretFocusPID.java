@@ -23,19 +23,19 @@ public class TurretFocusPID extends PIDCommand {
   public TurretFocusPID(TurretMotor Motor) {
     super(
       // The controller that the command will use
-      new PIDController(0.1, 0.002, 15),
+      new PIDController(0.075, 0.002, 0),
       // This should return the measurement
       () -> Motor.getAzimuth(),
       // This should return the setpoint (can also be a constant)
       0.0,
       // This uses the output
       output -> {
-        try {Motor.setPower(output);}
+        try {Motor.setPower(-output);}
         catch(IllegalArgumentException percentageOverFlException) {}
         // Use the output here
         }
     );
-    this.getController().setTolerance(0.1);
+    this.getController().setTolerance(0);
     this.Motor = Motor;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
