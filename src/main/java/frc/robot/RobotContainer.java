@@ -77,8 +77,12 @@ public class RobotContainer {
   private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8);
   private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
+<<<<<<< HEAD
   private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret);
   private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Finding,FocusingPID);
+=======
+  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Focusing);
+>>>>>>> origin/master
   private double topPercent = 0;//0.8;
   private double bottomPercent = 0;//-0.15;
 
@@ -101,9 +105,11 @@ public class RobotContainer {
   private final JoystickButton AButton = new JoystickButton(ControllerDrive, 1); 
   private final JoystickButton XButton = new JoystickButton(ControllerDrive,3);
   private final JoystickButton BButton = new JoystickButton(ControllerDrive, 2); 
-  private final JoystickButton ShoulderLeft = new JoystickButton(ControllerDrive, 0);
-  private final JoystickButton ShoulderRight = new JoystickButton(ControllerDrive, 0);
-  private final JoystickButton LJoystickClick = new JoystickButton(ControllerDrive, 0);
+  private final JoystickButton ShoulderLeft = new JoystickButton(ControllerDrive, 5);
+  private final JoystickButton ShoulderRight = new JoystickButton(ControllerDrive, 6);
+  private final JoystickButton LJoystickClick = new JoystickButton(ControllerDrive, 9);
+  private final JoystickButton RJoystickClick = new JoystickButton(ControllerDrive, 10);
+
   private double adjustAmount = 0.05;
 
   private void setLoopPowerPercent(EnableFalconVelocityClosedLoop Loop,double percent) {
@@ -139,6 +145,7 @@ public class RobotContainer {
     ShoulderRight.whenPressed(() -> {adjustAmount = 0.001;}); //extra fine adjust
     ShoulderRight.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse`
     LJoystickClick.whenPressed(MotorTracker::toggleEnabled); //toggle prints
+    RJoystickClick.whenPressed(() -> {setLoopPowerPercent(VelCLTOP,topPercent=0);setLoopPowerPercent(VelCLBOTTOM,bottomPercent=0);});
   }
 
 
