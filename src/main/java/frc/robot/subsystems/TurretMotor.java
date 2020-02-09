@@ -37,9 +37,10 @@ public class TurretMotor extends SubsystemBase {
   }
   
   public void setPower(double power) {
-    if(power > 1 || power < 1)
+    if(Math.abs(power) > 1)
       throw new IllegalArgumentException("Speed is too high");
     power *= gain;
+
     motor.set(ControlMode. PercentOutput, power);
   }
 
