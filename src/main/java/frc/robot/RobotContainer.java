@@ -7,8 +7,11 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
@@ -19,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -36,30 +40,44 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-  private Joystick toggler = new Joystick(0);
-  public class VictorWrapper extends SubsystemBase {
-    private VictorSPX VictorController;
-    private double rateControlled;
-    private double t = 0.0;
-    public VictorWrapper(int VictorChannel) {
-      this.VictorController = new VictorSPX(VictorChannel);
-      this.rateControlled = 0.0;
+  private class MotorPercent extends CommandBase {
+    private HashMap<EnableFalconVelocityClosedLoop,Double> LoopToPercent = new HashMap<EnableFalconVelocityClosedLoop,Double>();
+    private EnableFalconVelocityClosedLoop topLoop,bottomLoop;
+    private boolean printOut = true;
+    MotorPercent (EnableFalconVelocityClosedLoop topLoop, double percentTop,EnableFalconVelocityClosedLoop bottomLoop, double percentBottom) {
+      LoopToPercent.put(topLoop, percentTop);
+      LoopToPercent.put(bottomLoop, percentBottom);
+      this.topLoop = topLoop;
+      this.bottomLoop = bottomLoop;
     }
 
-    public void incrementPower(double increment) {
-      this.rateControlled += increment;
-      this.VictorController.set(ControlMode.PercentOutput,rateControlled/192307);
+    public void changePercent(EnableFalconVelocityClosedLoop Loop, double newPercent) {
+      if (LoopToPercent.get(Loop) != null) {
+        LoopToPercent.put(Loop,newPercent);
+      }
+    }
+
+    public void execute() {
+      if (printOut) {
+        System.out.println("TOP: " + LoopToPercent.get(topLoop).toString() + " Bottom: " + LoopToPercent.get(bottomLoop).toString());
+      }
+    }
+
+    public void setEnabled(boolean newState) {
+      printOut = newState;
+    }
+    public void toggleEnabled() {
+      setEnabled(!printOut);
     }
   }
+  //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private Joystick toggler = new Joystick(0);
   private final NetworkTableInstance RobotMainNetworkTableInstance = NetworkTableInstance.getDefault();
 
   private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8);
   private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
-  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup();
-
+  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Finding,Focusing);
   private double topPercent = 0;//0.8;
   private double bottomPercent = 0;//-0.15;
 
@@ -71,7 +89,10 @@ public class RobotContainer {
   private Encoder enc2 = new Encoder(2, 3);
   private FalconClosedLoop Cim2 = new FalconClosedLoop(6,0,30,ControlMode.Velocity);
   private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,10000*bottomPercent);
-  private ParallelCommandGroup AutonGroup = new ParallelCommandGroup(VelCLTOP,VelCLBOTTOM);
+
+  private final MotorPercent MotorTracker = new MotorPercent(VelCLTOP, topPercent, VelCLBOTTOM, bottomPercent);
+
+  private ParallelCommandGroup AutonGroup = new ParallelCommandGroup(VelCLTOP,VelCLBOTTOM,MotorTracker);
   private Joystick ControllerDrive = new Joystick(0);
   private final POVButton POVTop= new POVButton(ControllerDrive, 0);
   private final POVButton POVBottom= new POVButton(ControllerDrive, 180);
@@ -79,10 +100,15 @@ public class RobotContainer {
   private final JoystickButton AButton = new JoystickButton(ControllerDrive, 1); 
   private final JoystickButton XButton = new JoystickButton(ControllerDrive,3);
   private final JoystickButton BButton = new JoystickButton(ControllerDrive, 2); 
+  private final JoystickButton ShoulderLeft = new JoystickButton(ControllerDrive, 0);
+  private final JoystickButton ShoulderRight = new JoystickButton(ControllerDrive, 0);
+  private final JoystickButton LJoystickClick = new JoystickButton(ControllerDrive, 0);
+  private double adjustAmount = 0.05;
 
   private void setLoopPowerPercent(EnableFalconVelocityClosedLoop Loop,double percent) {
     System.out.println(percent);
     Loop.changeVelocity(percent*10000);
+    MotorTracker.changePercent(Loop, percent);
   }
   //8 - dio 0,1
   //5- dio 2,3
@@ -93,7 +119,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
   }
-
   /** 
    * Use this method to define your button->command mappings.  Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -101,14 +126,18 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    TurretGroup.addCommands(Focusing);
     BButton.whenPressed(TurretGroup);
     XButton.whenPressed(new InstantCommand(Focusing::change));
-    POVTop.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent+=.05));
-    POVBottom.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent-=.05));
+    POVTop.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent+=adjustAmount));
+    POVBottom.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent-=adjustAmount));
 
-    YButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent-=.05));
-    AButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent+=.05));
+    YButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent-=adjustAmount));
+    AButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent+=adjustAmount));
+    ShoulderLeft.whenPressed(() -> {adjustAmount = 0.01;}); //fine adjust
+    ShoulderLeft.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse
+    ShoulderRight.whenPressed(() -> {adjustAmount = 0.001;}); //extra fine adjust
+    ShoulderRight.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse`
+    LJoystickClick.whenPressed(MotorTracker::toggleEnabled); //toggle prints
   }
 
 
