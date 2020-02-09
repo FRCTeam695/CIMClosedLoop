@@ -77,12 +77,9 @@ public class RobotContainer {
   private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8);
   private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
-<<<<<<< HEAD
   private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret);
   private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Finding,FocusingPID);
-=======
-  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Focusing);
->>>>>>> origin/master
+
   private double topPercent = 0;//0.8;
   private double bottomPercent = 0;//-0.15;
 
