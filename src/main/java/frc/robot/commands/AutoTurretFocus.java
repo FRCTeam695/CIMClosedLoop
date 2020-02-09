@@ -28,7 +28,8 @@ public class AutoTurretFocus extends CommandBase {
   public static final double HORIZONTAL_ADJUST = 2;
   public static final double HORIZONTAL_GAIN_APPLICATION_THRESHOLDP = 10;
   public static final double HORIZONTAL_GAIN_APPLICATION_THRESHOLDN = -10;
-  public static final double HORIZONTAL_CAP = .75;
+  public static final double HORIZONTAL_CAPP = .75;
+  public static final double HORIZONTAL_CAPN = -.75;
   private int i = 1;
 
   private double horizontalError;
@@ -57,17 +58,19 @@ public class AutoTurretFocus extends CommandBase {
     System.out.println(horizontalError);
 
     horizontalAdjustment = HORIZONTAL_ADJUST*horizontalError;
-		if (horizontalError > HORIZONTAL_GAIN_APPLICATION_THRESHOLDP || horizontalError < HORIZONTAL_GAIN_APPLICATION_THRESHOLDN)
+    if (horizontalError > HORIZONTAL_GAIN_APPLICATION_THRESHOLDP || (horizontalError > HORIZONTAL_GAIN_APPLICATION_THRESHOLDN && horizontalError < 0))
 		{
 			horizontalAdjustment -= HORIZONTAL_GAIN;
 		}
-		else if ( horizontalError != 0 && (horizontalError < HORIZONTAL_GAIN_APPLICATION_THRESHOLDP || horizontalError > HORIZONTAL_GAIN_APPLICATION_THRESHOLDN))
+		else if ( horizontalError != 0 && ((horizontalError < HORIZONTAL_GAIN_APPLICATION_THRESHOLDP && horizontalError > 0) || horizontalError < HORIZONTAL_GAIN_APPLICATION_THRESHOLDN))
 		{
 			horizontalAdjustment += HORIZONTAL_GAIN;
     }
 
-    if(horizontalAdjustment >= HORIZONTAL_CAP)
-      horizontalAdjustment = HORIZONTAL_CAP;
+    if(horizontalAdjustment >= HORIZONTAL_CAPP)
+      horizontalAdjustment = HORIZONTAL_CAPP;
+    else if(horizontalAdjustment <= HORIZONTAL_CAPN)
+      horizontalAdjustment = HORIZONTAL_CAPN;
 
     /*verticalAdjustment = VERTICAL_ADJUST*verticalError;
 		if (verticalError > VERTICAL_GAIN_APPLICATION_THRESHOLD)
