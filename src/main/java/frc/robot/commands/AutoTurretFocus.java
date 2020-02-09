@@ -24,10 +24,10 @@ public class AutoTurretFocus extends CommandBase {
   /*public static final double VERTICAL_GAIN = -.1;
   public static final double VERTICAL_ADJUST =  -0.15;
   public static final double VERTICAL_GAIN_APPLICATION_THRESHOLD = 5;*/
-  public static final double HORIZONTAL_GAIN = -1.5;
-  public static final double HORIZONTAL_ADJUST = 2;
-  public static final double HORIZONTAL_GAIN_APPLICATION_THRESHOLDP = 10;
-  public static final double HORIZONTAL_GAIN_APPLICATION_THRESHOLDN = -10;
+  public static final double HORIZONTAL_GAIN = -3;
+  public static final double HORIZONTAL_ADJUST = 3;
+  public static final double HORIZONTAL_GAIN_APPLICATION_THRESHOLDP = 3;
+  public static final double HORIZONTAL_GAIN_APPLICATION_THRESHOLDN = -3;
   public static final double HORIZONTAL_CAPP = .75;
   public static final double HORIZONTAL_CAPN = -.75;
   private int i = 1;
@@ -81,9 +81,10 @@ public class AutoTurretFocus extends CommandBase {
 		{
 			verticalAdjustment += VERTICAL_GAIN;
     }*/
-    
+    //if(horizontalError > 2 || horizontalError < -2) {
     try {motor.setPower(horizontalAdjustment/3);}
     catch(IllegalArgumentException percentageOverFlException) {}
+    //}
     
     //try {motor.setPower(verticalAdjustment);}
     //catch(IllegalArgumentException PositionOverflow) {}
