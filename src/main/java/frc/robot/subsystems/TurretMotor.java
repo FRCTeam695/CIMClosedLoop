@@ -38,6 +38,9 @@ public class TurretMotor extends SubsystemBase {
     this.motor = new VictorSPX(motorNum);
     this.TopShooterMotor = TopShootorMotor;
     this.BottomShooterMotor = BottomShootorMotor;
+    this.TopShooterMotor.setClosedLoopMode(ControlMode.Velocity);
+    this.BottomShooterMotor.setClosedLoopMode(ControlMode.Velocity);
+
   }
   
   public void setPower(double power) {

@@ -16,42 +16,42 @@ import frc.robot.subsystems.TurretMotor;
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class TurretFocusPID extends PIDCommand {
   private TurretMotor Motor;
-  private double timeOutOfSetpoint = 0;
+  private static double timeOutOfSetpoint = 0;
   /**
    * Creates a new TurretFocusPID.
    */
-  public TurretFocusPID(TurretMotor Motor) {
+  public TurretFocusPID(TurretMotor Motor,PIDController PID) {
     super(
       // The controller that the command will use
-      new PIDController(0.075, 0.002, 0),
+      PID,
       // This should return the measurement
       () -> Motor.getAzimuth(),
       // This should return the setpoint (can also be a constant)
       0.0,
       // This uses the output
       output -> {
-        try {Motor.setPower(-output);}
+        try {Motor.setPower(output);}
         catch(IllegalArgumentException percentageOverFlException) {}
-        // Use the output here
+        System.out.println("CEHCK12" + ((Double) Motor.getAzimuth()).toString() + PID.atSetpoint());
+
+        if (PID.atSetpoint()) { 
+          System.out.println("in OF SET POINT AAAAAAA" + ((Double) Motor.determineBottomMotorPercent()).toString());
+          timeOutOfSetpoint = 0;
+          Motor.setMotorPowers(0.8, -Motor.determineBottomMotorPercent());
+        } else {
+          timeOutOfSetpoint += 0.02;
+          if (timeOutOfSetpoint >= 0.5) {
+            Motor.setMotorPowers(0, 0); //stop motors if out of setpoint for too long.
+          }   
+        }        // Use the output here
         }
     );
-    this.getController().setTolerance(0.01);
+    this.getController().setTolerance(0.8);
     this.Motor = Motor;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
   }
 
-  public void execute() {
-    if (getController().atSetpoint()) {      
-      timeOutOfSetpoint = 0;
-      Motor.setMotorPowers(0.8, Motor.determineBottomMotorPercent());
-    } else {
-      timeOutOfSetpoint += 0.02;
-      if (timeOutOfSetpoint >= 0.5) {
-        Motor.setMotorPowers(0, 0); //stop motors if out of setpoint for too long.
-      }   
-    }
-  }
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
