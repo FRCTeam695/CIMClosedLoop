@@ -44,11 +44,13 @@ public class RobotContainer {
     private HashMap<EnableFalconVelocityClosedLoop,Double> LoopToPercent = new HashMap<EnableFalconVelocityClosedLoop,Double>();
     private EnableFalconVelocityClosedLoop topLoop,bottomLoop;
     private boolean printOut = true;
-    MotorPercent (EnableFalconVelocityClosedLoop topLoop, double percentTop,EnableFalconVelocityClosedLoop bottomLoop, double percentBottom) {
+    private TurretMotor Motor;
+    MotorPercent (EnableFalconVelocityClosedLoop topLoop, double percentTop,EnableFalconVelocityClosedLoop bottomLoop, double percentBottom,TurretMotor Motor) {
       LoopToPercent.put(topLoop, percentTop);
       LoopToPercent.put(bottomLoop, percentBottom);
       this.topLoop = topLoop;
       this.bottomLoop = bottomLoop;
+      this.Motor = Motor;
     }
 
     public void changePercent(EnableFalconVelocityClosedLoop Loop, double newPercent) {
@@ -59,7 +61,7 @@ public class RobotContainer {
 
     public void execute() {
       if (printOut) {
-        System.out.println("TOP: " + LoopToPercent.get(topLoop).toString() + " Bottom: " + LoopToPercent.get(bottomLoop).toString());
+        System.out.println("TOP: " + LoopToPercent.get(topLoop).toString() + " Bottom: " + LoopToPercent.get(bottomLoop).toString() + "LIME DISTANCE:" + ((Double) Motor.getDistanceToContour()).toString());
       }
     }
 
@@ -85,16 +87,16 @@ public class RobotContainer {
 
   private Encoder enc1 = new Encoder(0, 1);
   //7 is top, 6 is bottom
-  private FalconClosedLoop Cim1 = new FalconClosedLoop(7,0,30,ControlMode.Velocity);
-  private EnableFalconVelocityClosedLoop VelCLTOP = new EnableFalconVelocityClosedLoop(Cim1,10000*topPercent);
+  private CimClosedLoop TopCIM = new CimClosedLoop(7,0,30,ControlMode.Velocity);
+  //private EnableFalconVelocityClosedLoop VelCLTOP = new EnableFalconVelocityClosedLoop(Cim1,10000*topPercent);
 
   private Encoder enc2 = new Encoder(2, 3);
-  private FalconClosedLoop Cim2 = new FalconClosedLoop(6,0,30,ControlMode.Velocity);
-  private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,10000*bottomPercent);
+  private CimClosedLoop BottomCIM = new CimClosedLoop(6,0,30,ControlMode.Velocity);
+  //private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,10000*bottomPercent);
 
-  private final MotorPercent MotorTracker = new MotorPercent(VelCLTOP, topPercent, VelCLBOTTOM, bottomPercent);
+  //private final MotorPercent MotorTracker = new MotorPercent(VelCLTOP, topPercent, VelCLBOTTOM, bottomPercent,Turret);
 
-  private ParallelCommandGroup AutonGroup = new ParallelCommandGroup(VelCLTOP,VelCLBOTTOM,MotorTracker);
+  //private ParallelCommandGroup AutonGroup = new ParallelCommandGroup(VelCLTOP,VelCLBOTTOM,MotorTracker);
   private Joystick ControllerDrive = new Joystick(0);
   private final POVButton POVTop= new POVButton(ControllerDrive, 0);
   private final POVButton POVBottom= new POVButton(ControllerDrive, 180);

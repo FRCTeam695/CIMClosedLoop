@@ -26,7 +26,7 @@ class PIDCoefficients {
     }
 }
 
-public class FalconClosedLoop extends SubsystemBase {
+public class CimClosedLoop extends SubsystemBase {
 
     private TalonSRX Talon; 
     private int timeoutMs = 30;
@@ -35,7 +35,7 @@ public class FalconClosedLoop extends SubsystemBase {
     private static PIDCoefficients VelocityPIDCoefficients = new PIDCoefficients(.23,0.0004,7,0);
     private static PIDCoefficients PositionPIDCoefficients = new PIDCoefficients(1,0,0,0);
 
-    public FalconClosedLoop(int talonId,int PIDLoopId,int timeoutMs,ControlMode ClosedLoopMode) {
+    public CimClosedLoop(int talonId,int PIDLoopId,int timeoutMs,ControlMode ClosedLoopMode) {
         this.PIDLoopId = PIDLoopId;
         this.timeoutMs = timeoutMs;
         this.Talon = new TalonSRX(talonId);
@@ -96,6 +96,10 @@ public class FalconClosedLoop extends SubsystemBase {
             throw new IllegalArgumentException("Cannot set control mode to velocity when motor control mode is not velocity.");
         double targetVelocity_UnitsPer100ms = (velocity * 4096/600);
         Talon.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+    }
+
+    public void setVelocityPercent(double percent) {
+        setVelocity(percent*10000);
     }
     public void setMotor(double value) {
         Talon.set(CurrentControlMode,value);

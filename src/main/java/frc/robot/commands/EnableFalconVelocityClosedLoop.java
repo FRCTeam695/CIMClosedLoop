@@ -10,16 +10,16 @@ package frc.robot.commands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.FalconClosedLoop;
+import frc.robot.subsystems.CimClosedLoop;
 
 
 public class EnableFalconVelocityClosedLoop extends CommandBase {
   /**
    * Creates a new EnableCIMClosedLoop.
    */
-  FalconClosedLoop closedLoop;
+  CimClosedLoop closedLoop;
   double velocity;
-  public EnableFalconVelocityClosedLoop(FalconClosedLoop loop,double velocity) {
+  public EnableFalconVelocityClosedLoop(CimClosedLoop loop,double velocity) {
     this.closedLoop = loop;
     this.velocity = velocity;
     loop.setClosedLoopMode(ControlMode.Velocity);
