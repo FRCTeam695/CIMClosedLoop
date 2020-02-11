@@ -18,8 +18,8 @@ public class AutoTurretRotation extends CommandBase {
   private TurretMotor motor;
   private int t = 0;
   private int i = 0;
-  private final int finalLimit = 500;
-  private final double velocity = .25;
+  private final int finalLimit = 1000;
+  private final double velocity = .5;
 
   //private int panDirection = 1;
   /**
@@ -49,11 +49,9 @@ public class AutoTurretRotation extends CommandBase {
     }
     if(t == 0) {
       i = 0;
-      motor.setPower(velocity);
     }
     if(t == finalLimit) {
       i = 1;
-      motor.setPower(-velocity);
     }
     
   }
