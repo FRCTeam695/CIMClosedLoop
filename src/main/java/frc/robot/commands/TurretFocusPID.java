@@ -16,7 +16,7 @@ import frc.robot.subsystems.TurretMotor;
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class TurretFocusPID extends PIDCommand {
   private TurretMotor Motor;
-
+  private double timeOutOfSetpoint = 0;
   /**
    * Creates a new TurretFocusPID.
    */
@@ -35,12 +35,23 @@ public class TurretFocusPID extends PIDCommand {
         // Use the output here
         }
     );
-    this.getController().setTolerance(0);
+    this.getController().setTolerance(0.01);
     this.Motor = Motor;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
   }
 
+  public void execute() {
+    if (getController().atSetpoint()) {      
+      timeOutOfSetpoint = 0;
+      Motor.setMotorPowers(0.8, Motor.determineBottomMotorPercent());
+    } else {
+      timeOutOfSetpoint += 0.02;
+      if (timeOutOfSetpoint >= 0.5) {
+        Motor.setMotorPowers(0, 0); //stop motors if out of setpoint for too long.
+      }   
+    }
+  }
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

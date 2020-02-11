@@ -76,11 +76,7 @@ public class RobotContainer {
   private Joystick toggler = new Joystick(0);
   private final NetworkTableInstance RobotMainNetworkTableInstance = NetworkTableInstance.getDefault();
 
-  private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8);
-  private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
-  private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
-  private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret);
-  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Finding,FocusingPID);
+
 
   private double topPercent = 0;//0.8;
   private double bottomPercent = 0;//-0.15;
@@ -95,8 +91,12 @@ public class RobotContainer {
   //private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,10000*bottomPercent);
 
   //private final MotorPercent MotorTracker = new MotorPercent(VelCLTOP, topPercent, VelCLBOTTOM, bottomPercent,Turret);
-
-  //private ParallelCommandGroup AutonGroup = new ParallelCommandGroup(VelCLTOP,VelCLBOTTOM,MotorTracker);
+  private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8,TopCIM,BottomCIM);
+  private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
+  private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
+  private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret);
+  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Finding,FocusingPID);
+  private ParallelCommandGroup AutonGroup = new ParallelCommandGroup();
   private Joystick ControllerDrive = new Joystick(0);
   private final POVButton POVTop= new POVButton(ControllerDrive, 0);
   private final POVButton POVBottom= new POVButton(ControllerDrive, 180);
@@ -114,7 +114,7 @@ public class RobotContainer {
   private void setLoopPowerPercent(EnableFalconVelocityClosedLoop Loop,double percent) {
     System.out.println(percent);
     Loop.changeVelocity(percent*10000);
-    MotorTracker.changePercent(Loop, percent);
+    //MotorTracker.changePercent(Loop, percent);
   }
   //8 - dio 0,1
   //5- dio 2,3
@@ -134,17 +134,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
     BButton.whenPressed(TurretGroup);
     XButton.whenPressed(new InstantCommand(Focusing::change));
-    POVTop.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent+=adjustAmount));
-    POVBottom.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent-=adjustAmount));
+    //POVTop.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent+=adjustAmount));
+    //POVBottom.whenPressed(() -> setLoopPowerPercent(VelCLTOP,topPercent-=adjustAmount));
 
-    YButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent-=adjustAmount));
-    AButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent+=adjustAmount));
-    ShoulderLeft.whenPressed(() -> {adjustAmount = 0.01;}); //fine adjust
-    ShoulderLeft.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse
-    ShoulderRight.whenPressed(() -> {adjustAmount = 0.001;}); //extra fine adjust
-    ShoulderRight.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse`
-    LJoystickClick.whenPressed(MotorTracker::toggleEnabled); //toggle prints
-    RJoystickClick.whenPressed(() -> {setLoopPowerPercent(VelCLTOP,topPercent=0);setLoopPowerPercent(VelCLBOTTOM,bottomPercent=0);});
+    //YButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent-=adjustAmount));
+    //AButton.whenPressed(() -> setLoopPowerPercent(VelCLBOTTOM,bottomPercent+=adjustAmount));
+    //ShoulderLeft.whenPressed(() -> {adjustAmount = 0.01;}); //fine adjust
+    //ShoulderLeft.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse
+    //ShoulderRight.whenPressed(() -> {adjustAmount = 0.001;}); //extra fine adjust
+    //ShoulderRight.whenReleased(() -> {adjustAmount = 0.05;}); //return to coarse`
+    //LJoystickClick.whenPressed(MotorTracker::toggleEnabled); //toggle prints
+    //RJoystickClick.whenPressed(() -> {setLoopPowerPercent(VelCLTOP,topPercent=0);setLoopPowerPercent(VelCLBOTTOM,bottomPercent=0);});
   }
 
 
