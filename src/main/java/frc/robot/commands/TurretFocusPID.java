@@ -30,23 +30,23 @@ public class TurretFocusPID extends PIDCommand {
       0.0,
       // This uses the output
       output -> {
-        try {Motor.setPower(output);}
-        catch(IllegalArgumentException percentageOverFlException) {}
-        System.out.println("CEHCK12" + ((Double) Motor.getAzimuth()).toString() + PID.atSetpoint());
-
+        if (!Motor.isTooFarLeft() && !Motor.isTooFarRight()) {
+          try {Motor.setPower(output);}
+          catch(IllegalArgumentException percentageOverFlException) {}
+        }
         if (PID.atSetpoint()) { 
-          System.out.println("in OF SET POINT AAAAAAA" + ((Double) Motor.determineBottomMotorPercent()).toString());
+          System.out.println("at set point, Bottom percent: " + ((Double) Motor.determineBottomMotorPercent()).toString() + " Distance in feet : " +((Double) Motor.getDistanceToContourInFeet()).toString());
           timeOutOfSetpoint = 0;
           Motor.setMotorPowers(0.8, -Motor.determineBottomMotorPercent());
         } else {
           timeOutOfSetpoint += 0.02;
-          if (timeOutOfSetpoint >= 0.5) {
+          if (timeOutOfSetpoint >= 0.25) {
             Motor.setMotorPowers(0, 0); //stop motors if out of setpoint for too long.
           }   
         }        // Use the output here
         }
     );
-    this.getController().setTolerance(0.8);
+    this.getController().setTolerance(1.2);
     this.Motor = Motor;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
