@@ -66,7 +66,7 @@ public class TurretMotor extends SubsystemBase {
   }
 
   public double getDistanceToContourInFeet() {
-    return 11.391581132*getDistanceToContour();
+    return 0.0877302343584*getDistanceToContour();
   }
 
   public double determineBottomMotorPercent() {
