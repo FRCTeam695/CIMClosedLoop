@@ -39,19 +39,17 @@ public class AutoTurretRotation extends CommandBase {
   //second version of execute
   @Override
   public void execute() {
-    if(i == 0) {
+    if(!motor.isTooFarLeft() && !motor.isTooFarRight() && i==0)
       motor.setPower(velocity);
-      t += 20;
-    }
-    if(i == 1) {
+    if(!motor.isTooFarLeft() && !motor.isTooFarRight() && i==1)
       motor.setPower(-velocity);
-      t -= 20;
+    if(motor.isTooFarLeft()) {
+      i=1;
+      motor.setPower(-velocity);
     }
-    if(t == 0) {
-      i = 0;
-    }
-    if(t == finalLimit) {
-      i = 1;
+    if(motor.isTooFarRight()) {
+      i=0;
+      motor.setPower(velocity);
     }
     
   }
