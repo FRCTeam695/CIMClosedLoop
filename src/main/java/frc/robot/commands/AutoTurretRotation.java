@@ -56,7 +56,7 @@ public class AutoTurretRotation extends CommandBase {
 
   public boolean endCommand() {
     System.out.println(motor.getAzimuth());
-    return motor.getAzimuth() != 0.0;
+    return motor.getContourArea() >= 0.02;
   }
 
   // Returns true when the command should end.
