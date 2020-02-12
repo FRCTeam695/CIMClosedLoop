@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -29,7 +30,9 @@ public class TurretMotor extends SubsystemBase {
   private NetworkTableEntry LimeLightAzimuth;
   private NetworkTableEntry LimeLightCoPolar;
   private NetworkTableEntry LimeLightContourArea;
-  
+  private DigitalInput LimitSwitchLeft = new DigitalInput(0);
+  private DigitalInput LimitSwitchRight = new DigitalInput(0);
+
   public TurretMotor(NetworkTableInstance RobotMainNetworkTableInstance, int motorNum,CimClosedLoop TopShootorMotor,CimClosedLoop BottomShootorMotor) {
     this.LimeLight = RobotMainNetworkTableInstance.getTable("limelight");
     this.LimeLightAzimuth = LimeLight.getEntry("tx");
@@ -38,6 +41,9 @@ public class TurretMotor extends SubsystemBase {
     this.motor = new VictorSPX(motorNum);
     this.TopShooterMotor = TopShootorMotor;
     this.BottomShooterMotor = BottomShootorMotor;
+    this.TopShooterMotor.setClosedLoopMode(ControlMode.Velocity);
+    this.BottomShooterMotor.setClosedLoopMode(ControlMode.Velocity);
+
   }
   
   public void setPower(double power) {
@@ -46,6 +52,14 @@ public class TurretMotor extends SubsystemBase {
     power *= gain;
 
     motor.set(ControlMode. PercentOutput, power);
+  }
+
+  public boolean isTooFarLeft() {
+    return LimitSwitchLeft.get();
+  }
+
+  public boolean isTooFarRight() {
+    return LimitSwitchRight.get();
   }
 
   public double getAzimuth(){
@@ -63,12 +77,12 @@ public class TurretMotor extends SubsystemBase {
   }
 
   public double getDistanceToContourInFeet() {
-    return 11.391581132*getDistanceToContour();
+    return 0.0877302343584*getDistanceToContour();
   }
 
   public double determineBottomMotorPercent() {
     double distance = getDistanceToContourInFeet();
-    return -23.80952+12.53968*distance-1.160714*Math.pow(distance,2)+0.03472222*Math.pow(distance,3);
+    return (-23.80952+12.53968*distance-1.160714*Math.pow(distance,2)+0.03472222*Math.pow(distance,3))/100;
   }
   public void setMotorPowers(double topPercent,double bottomPercent) {
     TopShooterMotor.setVelocityPercent(topPercent);

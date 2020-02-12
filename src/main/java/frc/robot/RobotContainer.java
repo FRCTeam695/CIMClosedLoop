@@ -94,8 +94,8 @@ public class RobotContainer {
   private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8,TopCIM,BottomCIM);
   private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
-  private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret);
-  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(Finding,FocusingPID);
+  private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret,new PIDController(0.1, 0.001, 0));
+  private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(FocusingPID);
   private ParallelCommandGroup AutonGroup = new ParallelCommandGroup();
   private Joystick ControllerDrive = new Joystick(0);
   private final POVButton POVTop= new POVButton(ControllerDrive, 0);
