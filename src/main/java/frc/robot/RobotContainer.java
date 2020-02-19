@@ -74,7 +74,7 @@ public class RobotContainer {
   private Joystick toggler = new Joystick(0);
   private final NetworkTableInstance RobotMainNetworkTableInstance = NetworkTableInstance.getDefault();
 
-  private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8);
+  private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 11);
   private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
   private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret);
@@ -83,14 +83,12 @@ public class RobotContainer {
   private double topPercent = 0;//0.8;
   private double bottomPercent = 0;//-0.15;
 
-  private Encoder enc1 = new Encoder(0, 1);
-  //7 is top, 6 is bottom
-  private FalconClosedLoop Cim1 = new FalconClosedLoop(7,0,30,ControlMode.Velocity);
-  private EnableFalconVelocityClosedLoop VelCLTOP = new EnableFalconVelocityClosedLoop(Cim1,10000*topPercent);
+  //21 is top, 22 is bottom
+  private FalconClosedLoop Cim1 = new FalconClosedLoop(21,0,30,ControlMode.Velocity);
+  private EnableFalconVelocityClosedLoop VelCLTOP = new EnableFalconVelocityClosedLoop(Cim1,142600.0*topPercent);
 
-  private Encoder enc2 = new Encoder(2, 3);
-  private FalconClosedLoop Cim2 = new FalconClosedLoop(6,0,30,ControlMode.Velocity);
-  private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,10000*bottomPercent);
+  private FalconClosedLoop Cim2 = new FalconClosedLoop(22,0,30,ControlMode.Velocity);
+  private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,142600.0*bottomPercent);
 
   private final MotorPercent MotorTracker = new MotorPercent(VelCLTOP, topPercent, VelCLBOTTOM, bottomPercent);
 
@@ -111,7 +109,7 @@ public class RobotContainer {
 
   private void setLoopPowerPercent(EnableFalconVelocityClosedLoop Loop,double percent) {
     System.out.println(percent);
-    Loop.changeVelocity(percent*10000);
+    Loop.changeVelocity(percent*142600.0);
     MotorTracker.changePercent(Loop, percent);
   }
   //8 - dio 0,1

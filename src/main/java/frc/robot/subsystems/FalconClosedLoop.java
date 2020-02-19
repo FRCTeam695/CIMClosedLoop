@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -28,7 +29,7 @@ class PIDCoefficients {
 
 public class FalconClosedLoop extends SubsystemBase {
 
-    private TalonSRX Talon; 
+    private TalonFX Talon; 
     private int timeoutMs = 30;
     private int PIDLoopId = 0;
     private ControlMode CurrentControlMode;
@@ -38,9 +39,9 @@ public class FalconClosedLoop extends SubsystemBase {
     public FalconClosedLoop(int talonId,int PIDLoopId,int timeoutMs,ControlMode ClosedLoopMode) {
         this.PIDLoopId = PIDLoopId;
         this.timeoutMs = timeoutMs;
-        this.Talon = new TalonSRX(talonId);
+        this.Talon = new TalonFX(talonId);
         Talon.configFactoryDefault();
-        Talon.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 
+        Talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 
         PIDLoopId,
         timeoutMs);
         Talon.setSensorPhase(true);
@@ -94,7 +95,7 @@ public class FalconClosedLoop extends SubsystemBase {
     public void setVelocity(double velocity) {
         if (!this.CurrentControlMode.equals(ControlMode.Velocity))
             throw new IllegalArgumentException("Cannot set control mode to velocity when motor control mode is not velocity.");
-        double targetVelocity_UnitsPer100ms = (velocity * 4096/600);
+        double targetVelocity_UnitsPer100ms = (velocity * 600/4096);
         Talon.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
     }
     public void setMotor(double value) {
