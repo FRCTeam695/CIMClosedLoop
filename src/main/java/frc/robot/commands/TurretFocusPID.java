@@ -31,13 +31,13 @@ public class TurretFocusPID extends PIDCommand {
       // This uses the output
       output -> {
         if (!Motor.isTooFarLeft() && !Motor.isTooFarRight()) {
-          try {Motor.setPower(output);}
+          try {Motor.setPower(-output);}
           catch(IllegalArgumentException percentageOverFlException) {}
         }
         if (PID.atSetpoint()) { 
           System.out.println("at set point, Bottom percent: " + ((Double) Motor.determineBottomMotorPercent()).toString() + " Distance in feet : " +((Double) Motor.getDistanceToContourInFeet()).toString());
           timeOutOfSetpoint = 0;
-          Motor.setMotorPowers(0.8, -Motor.determineBottomMotorPercent());
+          //Motor.setMotorPowers(Motor.determineTopMotorPercent(), Motor.determineBottomMotorPercent());
         } else {
           timeOutOfSetpoint += 0.02;
           if (timeOutOfSetpoint >= 0.25) {

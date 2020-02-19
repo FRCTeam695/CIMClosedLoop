@@ -81,17 +81,14 @@ public class RobotContainer {
   private double topPercent = 0;//0.8;
   private double bottomPercent = 0;//-0.15;
 
-  private Encoder enc1 = new Encoder(0, 1);
   //7 is top, 6 is bottom
-  private CimClosedLoop TopCIM = new CimClosedLoop(7,0,30,ControlMode.Velocity);
+  private CimClosedLoop TopCIM = new CimClosedLoop(21,0,30,ControlMode.Velocity);
   //private EnableFalconVelocityClosedLoop VelCLTOP = new EnableFalconVelocityClosedLoop(Cim1,10000*topPercent);
-
-  private Encoder enc2 = new Encoder(2, 3);
-  private CimClosedLoop BottomCIM = new CimClosedLoop(6,0,30,ControlMode.Velocity);
+  private CimClosedLoop BottomCIM = new CimClosedLoop(22,0,30,ControlMode.Velocity);
   //private EnableFalconVelocityClosedLoop VelCLBOTTOM = new EnableFalconVelocityClosedLoop(Cim2,10000*bottomPercent);
 
   //private final MotorPercent MotorTracker = new MotorPercent(VelCLTOP, topPercent, VelCLBOTTOM, bottomPercent,Turret);
-  private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 8,TopCIM,BottomCIM);
+  private final TurretMotor Turret = new TurretMotor(RobotMainNetworkTableInstance, 11,TopCIM,BottomCIM);
   private final AutoTurretRotation Finding = new AutoTurretRotation(Turret);
   private final AutoTurretFocus Focusing = new AutoTurretFocus(Turret);
   private final TurretFocusPID FocusingPID = new TurretFocusPID(Turret,new PIDController(0.1, 0.001, 0));

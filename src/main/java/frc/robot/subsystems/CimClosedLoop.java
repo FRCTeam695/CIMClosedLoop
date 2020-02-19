@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -28,7 +29,7 @@ class PIDCoefficients {
 
 public class CimClosedLoop extends SubsystemBase {
 
-    private TalonSRX Talon; 
+    private TalonFX Talon; 
     private int timeoutMs = 30;
     private int PIDLoopId = 0;
     private ControlMode CurrentControlMode;
@@ -38,9 +39,9 @@ public class CimClosedLoop extends SubsystemBase {
     public CimClosedLoop(int talonId,int PIDLoopId,int timeoutMs,ControlMode ClosedLoopMode) {
         this.PIDLoopId = PIDLoopId;
         this.timeoutMs = timeoutMs;
-        this.Talon = new TalonSRX(talonId);
+        this.Talon = new TalonFX(talonId);
         Talon.configFactoryDefault();
-        Talon.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 
+        Talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 
         PIDLoopId,
         timeoutMs);
         Talon.setSensorPhase(true);

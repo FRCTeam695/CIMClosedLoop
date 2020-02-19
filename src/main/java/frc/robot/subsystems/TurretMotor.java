@@ -8,6 +8,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -21,24 +23,24 @@ public class TurretMotor extends SubsystemBase {
   /**
    * Creates a new TurretMotor.
    */
-  private VictorSPX motor;
+  private TalonFX motor;
   private CimClosedLoop TopShooterMotor;
   private CimClosedLoop BottomShooterMotor;
-  private double gain = .4;
+  private double gain = .3;
   //private double multiple = .3;
   private NetworkTable LimeLight;
   private NetworkTableEntry LimeLightAzimuth;
   private NetworkTableEntry LimeLightCoPolar;
   private NetworkTableEntry LimeLightContourArea;
-  private DigitalInput LimitSwitchLeft = new DigitalInput(0);
-  private DigitalInput LimitSwitchRight = new DigitalInput(0);
+  //private DigitalInput LimitSwitchLeft = new DigitalInput(0);
+  //private DigitalInput LimitSwitchRight = new DigitalInput(0);
 
   public TurretMotor(NetworkTableInstance RobotMainNetworkTableInstance, int motorNum,CimClosedLoop TopShootorMotor,CimClosedLoop BottomShootorMotor) {
     this.LimeLight = RobotMainNetworkTableInstance.getTable("limelight");
     this.LimeLightAzimuth = LimeLight.getEntry("tx");
 		this.LimeLightCoPolar = LimeLight.getEntry("ty");
     this.LimeLightContourArea = LimeLight.getEntry("ta");
-    this.motor = new VictorSPX(motorNum);
+    this.motor = new TalonFX(motorNum);
     this.TopShooterMotor = TopShootorMotor;
     this.BottomShooterMotor = BottomShootorMotor;
     this.TopShooterMotor.setClosedLoopMode(ControlMode.Velocity);
@@ -55,11 +57,11 @@ public class TurretMotor extends SubsystemBase {
   }
 
   public boolean isTooFarLeft() {
-    return LimitSwitchLeft.get();
+    return false;//LimitSwitchLeft.get();
   }
 
   public boolean isTooFarRight() {
-    return LimitSwitchRight.get();
+    return false;//LimitSwitchRight.get();
   }
 
   public double getAzimuth(){
@@ -82,7 +84,11 @@ public class TurretMotor extends SubsystemBase {
 
   public double determineBottomMotorPercent() {
     double distance = getDistanceToContourInFeet();
-    return (-23.80952+12.53968*distance-1.160714*Math.pow(distance,2)+0.03472222*Math.pow(distance,3))/100;
+    return (41.73102 + (25.11446 - 41.73102)/(1 + Math.pow((distance/16.91975),13.40525)))/100;
+  }
+  public double determineTopMotorPercent() {
+    double distance = getDistanceToContourInFeet();
+    return (103.9625-6.687958*distance+0.6078882*Math.pow(distance,2)-0.01795044*Math.pow(distance,3))/100;
   }
   public void setMotorPowers(double topPercent,double bottomPercent) {
     TopShooterMotor.setVelocityPercent(topPercent);
